@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import json
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+from .mimir_utils import JsonCache, SettingsMixin
 
 
 # Default sources shown before the user customises anything.
@@ -21,7 +22,7 @@ _DEFAULT_SOURCES = [
 
 
 @dataclass
-class Settings:
+class Settings(SettingsMixin):
     api_key: str = ""
     sources: List[Dict[str, str]] = field(default_factory=lambda: list(_DEFAULT_SOURCES))
     poster_size: str = "w780"
@@ -31,40 +32,12 @@ class Settings:
     min_vote_count: int = 50
     include_adult: bool = False
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
 
-    def to_public_dict(self) -> Dict[str, Any]:
-        """Same as to_dict but with the API key masked."""
-        d = self.to_dict()
-        if d.get("api_key"):
-            d["api_key"] = "••••••••" + d["api_key"][-4:]
-        return d
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Settings":
-        known = set(cls.__dataclass_fields__)
-        return cls(**{k: v for k, v in data.items() if k in known})
-
-
-class PosterCache:
+class PosterCache(JsonCache):
     """Persists poster entries per source in a JSON file."""
 
-    def __init__(self, cache_path: Path):
-        self._path = cache_path
-        self._data: Dict[str, Any] = self._load()
-
-    def _load(self) -> Dict[str, Any]:
-        if self._path.exists():
-            try:
-                return json.loads(self._path.read_text())
-            except Exception:
-                pass
+    def _empty_state(self) -> Dict[str, Any]:
         return {"sources": {}}
-
-    def _save(self) -> None:
-        self._path.parent.mkdir(parents=True, exist_ok=True)
-        self._path.write_text(json.dumps(self._data, indent=2))
 
     def get_posters(self, source_id: str) -> List[Dict[str, Any]]:
         return self._data.get("sources", {}).get(source_id, {}).get("posters", [])

@@ -2,7 +2,7 @@
   "id": "com.mimir.movieposters",
   "name": "Movie Posters",
   "description": "Displays random movie posters from The Movie Database (TMDB). Supports genre and curated list sub-channels. Requires a free TMDB API key.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "embedded",
   "entry_point": "channel.py",
   "class_name": "MoviePostersChannel",
@@ -58,14 +58,23 @@
         },
         "poster_size": {
           "type": "string",
-          "enum": ["w342", "w500", "w780", "original"],
+          "enum": [
+            "w342",
+            "w500",
+            "w780",
+            "original"
+          ],
           "title": "Poster Size",
           "description": "TMDB image size to request",
           "default": "w780"
         },
         "fit_mode": {
           "type": "string",
-          "enum": ["letterbox", "crop", "stretch"],
+          "enum": [
+            "letterbox",
+            "crop",
+            "stretch"
+          ],
           "title": "Fit Mode",
           "default": "letterbox"
         },
@@ -99,14 +108,50 @@
     }
   },
   "endpoints": [
-    { "path": "/manifest", "method": "GET", "description": "Get channel manifest and capabilities" },
-    { "path": "/subchannels", "method": "GET", "description": "List configured sources" },
-    { "path": "/request-image", "method": "POST", "description": "Get a random movie poster as raw image bytes" },
-    { "path": "/settings", "method": "GET", "description": "Get channel settings" },
-    { "path": "/settings", "method": "PUT", "description": "Update channel settings" },
-    { "path": "/status", "method": "GET", "description": "Get cache and source status" },
-    { "path": "/refresh", "method": "POST", "description": "Trigger poster cache refresh" },
-    { "path": "/validate-key", "method": "POST", "description": "Validate a TMDB API key" },
-    { "path": "/genres", "method": "GET", "description": "List available TMDB genres" }
+    {
+      "path": "/manifest",
+      "method": "GET",
+      "description": "Get channel manifest and capabilities"
+    },
+    {
+      "path": "/subchannels",
+      "method": "GET",
+      "description": "List configured sources"
+    },
+    {
+      "path": "/request-image",
+      "method": "POST",
+      "description": "Get a random movie poster as raw image bytes"
+    },
+    {
+      "path": "/settings",
+      "method": "GET",
+      "description": "Get channel settings"
+    },
+    {
+      "path": "/settings",
+      "method": "PUT",
+      "description": "Update channel settings"
+    },
+    {
+      "path": "/status",
+      "method": "GET",
+      "description": "Get cache and source status"
+    },
+    {
+      "path": "/refresh",
+      "method": "POST",
+      "description": "Trigger poster cache refresh"
+    },
+    {
+      "path": "/validate-key",
+      "method": "POST",
+      "description": "Validate a TMDB API key"
+    },
+    {
+      "path": "/genres",
+      "method": "GET",
+      "description": "List available TMDB genres"
+    }
   ]
 }

@@ -11,6 +11,8 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
+from .mimir_utils import http_session, validate_key_nonempty
+
 logger = logging.getLogger("mimir.channels.movieposters.fetcher")
 
 _API_BASE = "https://api.themoviedb.org/3"
@@ -21,16 +23,16 @@ _PAGE_DELAY = 0.1  # seconds between paginated requests — TMDB limit is 40 req
 
 
 def _session(api_key: str) -> requests.Session:
-    s = requests.Session()
-    s.headers["User-Agent"] = _USER_AGENT
+    s = http_session(_USER_AGENT)
     s.params = {"api_key": api_key}  # type: ignore[assignment]
     return s
 
 
 def validate_api_key(api_key: str) -> Dict[str, Any]:
     """Test an API key against /3/configuration. Returns {valid, error}."""
-    if not api_key or not api_key.strip():
-        return {"valid": False, "error": "API key is empty"}
+    result = validate_key_nonempty(api_key)
+    if not result["valid"]:
+        return result
     try:
         resp = requests.get(
             f"{_API_BASE}/configuration",
